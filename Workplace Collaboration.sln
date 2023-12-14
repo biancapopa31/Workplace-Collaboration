@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workplace Collaboration", "Workplace Collaboration\Workplace Collaboration.csproj", "{A240B9CD-9B61-4063-9C98-8DEFCE321EA7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A240B9CD-9B61-4063-9C98-8DEFCE321EA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A240B9CD-9B61-4063-9C98-8DEFCE321EA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A240B9CD-9B61-4063-9C98-8DEFCE321EA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A240B9CD-9B61-4063-9C98-8DEFCE321EA7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4970F98A-E325-46D8-9A89-64C25FE9B071}
+	EndGlobalSection
+EndGlobal
