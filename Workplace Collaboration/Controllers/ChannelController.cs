@@ -41,10 +41,11 @@ namespace Workplace_Collaboration.Controllers
         [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult Index()
         {
-            var channels = db.Channels;
-
+            var channels = db.Channels.Include("Users").Include("Moderators");
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                                      .First();
             ViewBag.Channels = channels;
-
+            ViewBag.User = user;
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
@@ -206,6 +207,7 @@ namespace Workplace_Collaboration.Controllers
             }
         }
         //Method to show the members of a channel (pretty rudimentary atm)
+        [Authorize(Roles = "User,Moderator,Admin")]
         public ActionResult ShowUsers(int id)
         {
             Channel ch = db.Channels.Include("Users")
@@ -214,6 +216,34 @@ namespace Workplace_Collaboration.Controllers
                              .First();
             ViewBag.ChannelUsers = ch.Users;
             return View(ch); 
+        }
+        [Authorize(Roles = "User,Moderator,Admin")]
+        [HttpPost]
+        public ActionResult Join(int id)
+        {
+            Channel ch = db.Channels.Include("Users")
+                 .Include("Moderators")
+                 .Where(ch => ch.Id == id)
+                 .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+              .First();
+            if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
+            if (!ch.Users.Contains(user))
+            {
+                ch.Users.Add(user);
+                db.SaveChanges();
+                TempData["message"] = "Channel Joined";
+                TempData["messageType"] = "alert-success";
+                //Redirects to index because it breaks when sent to Show/ch.Id
+                //Needs Fixing
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["message"] = "Already part of this Channel";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("Index");
+            }
         }
     }
 }
