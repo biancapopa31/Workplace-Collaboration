@@ -61,12 +61,15 @@ namespace Workplace_Collaboration.Controllers
                                          .Include("Moderators")
                                          .Where(ch => ch.Id == id)
                                          .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+              .First();
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
                 ViewBag.Alert = TempData["messageType"];
             }
-
+            if (channel.Moderators.Contains(user) || User.IsInRole("Admin")) ViewBag.isAuthority = true;
+            else ViewBag.isAuthority = false;
             return View(channel);
         }
         //Method to access the form destined for creating channels
