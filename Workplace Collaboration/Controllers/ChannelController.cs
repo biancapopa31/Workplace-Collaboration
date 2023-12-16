@@ -95,9 +95,9 @@ namespace Workplace_Collaboration.Controllers
                 if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
                 ch.Users.Add(user);
                 if (user.IsModerator == null) user.IsModerator = new Collection<Channel>();
-                user.IsModerator.Add(ch);
+                //user.IsModerator.Add(ch);
                 if (user.Channels == null) user.Channels = new Collection<Channel>();
-                user.Channels.Add(ch);
+                //user.Channels.Add(ch);
                 db.Channels.Add(ch);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -117,20 +117,21 @@ namespace Workplace_Collaboration.Controllers
             //This is commented because the instance at line 147 doesn't work
             //Other two calls worked fine
             //Same error as for the New insert
-            //foreach (ApplicationUser member in users)
-                //if (member.Id == user_id) return true;
+            foreach (ApplicationUser member in users)
+                if (member.Id == user_id) return true;
             return false;
         }
         //Method to initiate editing of channel with a check for permissions
-        [Authorize(Roles = "Moderator,Admin")]
+        [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult Edit(int id)
         {
-
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                      .First();
             Channel ch = db.Channels.Include("Users")
                                           .Include("Moderators")
                                           .Where(ch => ch.Id == id)
                                           .First();
-            if (isUserinList(ch.Moderators, _userManager.GetUserId(User)) || User.IsInRole("Admin"))
+            if (ch.Moderators.Contains(user) || User.IsInRole("Admin"))
             //if (User.IsInRole("Admin"))
             {
                 return View(ch);
@@ -145,18 +146,20 @@ namespace Workplace_Collaboration.Controllers
         }
         //Updating the database with data received from edit form
         [HttpPost]
-        [Authorize(Roles = "Moderator,Admin")]
+        [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult Edit(int id, Channel requestChannel)
         {
-            Channel ch = db.Channels.Find(id);
-            
+            Channel ch = db.Channels.Include("Users")
+                                          .Include("Moderators")
+                                          .Where(ch => ch.Id == id)
+                                          .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                          .First();
             if (ModelState.IsValid)
             {
-                if (isUserinList(requestChannel.Moderators, _userManager.GetUserId(User)) || User.IsInRole("Admin"))
+                if (ch.Moderators.Contains(user) || User.IsInRole("Admin"))
                 //if (User.IsInRole("Admin"))
                 {
-                    ch.Moderators = requestChannel.Moderators;
-                    ch.Users = requestChannel.Users;
                     ch.Name = requestChannel.Name;
                     ch.Description = requestChannel.Description;
                     TempData["message"] = "Channel modified successfully";
@@ -178,7 +181,7 @@ namespace Workplace_Collaboration.Controllers
         }
         //Method for the deletion of a channel using its id (used only through the interface)
         [HttpPost]
-        [Authorize(Roles = "Moderator,Admin")]
+        [Authorize(Roles = "User,Moderator,Admin")]
         public ActionResult Delete(int id)
         {
             Channel ch = db.Channels.Include("Users")
