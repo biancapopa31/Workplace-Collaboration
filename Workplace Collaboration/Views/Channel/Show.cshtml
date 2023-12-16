@@ -1,9 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
+﻿@model Workplace_Collaboration.Models.Channel
 @if (TempData["message"] != null)
 {
     <div class="alert @ViewBag.Alert p-3 rounded-3 text-center mb-5">
@@ -23,11 +18,11 @@
 
     <div class="d-flex flex-row justify-content-between p-3 border-1 border-top">
 
-        <a class="btn btn-success" href="">Editeaza articol</a>
+        <a class="btn btn-success" href="/Channel/Edit/@Model.Id">Edit Channel</a>
 
-        <form method="post" action="">
+        <form method="post" action="/Channel/Delete/@Model.Id">
 
-            <button class="btn btn-danger" type="submit">Sterge Canal</button>
+            <button class="btn btn-danger" type="submit">Delete Channel</button>
 
         </form>
 
