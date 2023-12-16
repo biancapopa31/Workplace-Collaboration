@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Workplace_Collaboration.Data;
 using Workplace_Collaboration.Models;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Workplace_Collaboration.Controllers
 {
@@ -30,13 +32,10 @@ namespace Workplace_Collaboration.Controllers
         [NonAction]
         ApplicationUser getUser(string id)
         {
-            Console.WriteLine(id);
             foreach (var user in db.ApplicationUsers)
             {
-                //Console.WriteLine(user.Id);
                 if (user.Id == id) return user; 
             }
-            Console.WriteLine(1);
             return null;
         }
         [Authorize(Roles = "User,Moderator,Admin")]
@@ -85,14 +84,20 @@ namespace Workplace_Collaboration.Controllers
             if (ModelState.IsValid)
             {
                 //If successful, then add the channel to the database and redirect user to view of created channel
-                //ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
-                //                                       .First();
-                ApplicationUser user = new ApplicationUser();
-                user = getUser(_userManager.GetUserId(User));
+                ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                                      .First();
+                //ApplicationUser user = new ApplicationUser();
+                //user = getUser(_userManager.GetUserId(User));
                 //IMPORTANT: Can't add user to Mods and Users, needs fixing
-                //if (user == null) { System.Diagnostics.Debug.WriteLine("va"); }
-                //ch.Moderators.Add(user);
-                //ch.Users.Add(user);
+                if (user == null) { System.Diagnostics.Debug.WriteLine("va"); }
+                if (ch.Moderators == null) ch.Moderators = new Collection<ApplicationUser>();
+                ch.Moderators.Add(user);
+                if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
+                ch.Users.Add(user);
+                if (user.IsModerator == null) user.IsModerator = new Collection<Channel>();
+                user.IsModerator.Add(ch);
+                if (user.Channels == null) user.Channels = new Collection<Channel>();
+                user.Channels.Add(ch);
                 db.Channels.Add(ch);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -113,7 +118,7 @@ namespace Workplace_Collaboration.Controllers
             //Other two calls worked fine
             //Same error as for the New insert
             //foreach (ApplicationUser member in users)
-              //  if (member.Id == user_id) return true;
+                //if (member.Id == user_id) return true;
             return false;
         }
         //Method to initiate editing of channel with a check for permissions
@@ -138,18 +143,20 @@ namespace Workplace_Collaboration.Controllers
             }
 
         }
+        //Updating the database with data received from edit form
         [HttpPost]
         [Authorize(Roles = "Moderator,Admin")]
         public IActionResult Edit(int id, Channel requestChannel)
         {
             Channel ch = db.Channels.Find(id);
-            ch.Moderators = requestChannel.Moderators;
-            ch.Users = requestChannel.Users;
+            
             if (ModelState.IsValid)
             {
                 if (isUserinList(requestChannel.Moderators, _userManager.GetUserId(User)) || User.IsInRole("Admin"))
                 //if (User.IsInRole("Admin"))
                 {
+                    ch.Moderators = requestChannel.Moderators;
+                    ch.Users = requestChannel.Users;
                     ch.Name = requestChannel.Name;
                     ch.Description = requestChannel.Description;
                     TempData["message"] = "Channel modified successfully";
