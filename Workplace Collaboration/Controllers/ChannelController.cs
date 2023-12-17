@@ -217,6 +217,7 @@ namespace Workplace_Collaboration.Controllers
             ViewBag.ChannelUsers = ch.Users;
             return View(ch); 
         }
+        //Method that allows user to join a channel that they have not yet joined
         [Authorize(Roles = "User,Moderator,Admin")]
         [HttpPost]
         public ActionResult Join(int id)
@@ -227,6 +228,7 @@ namespace Workplace_Collaboration.Controllers
                  .First();
             ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
               .First();
+            //Initialise collection of users if not yet done(shouldn't ever happen but jic) 
             if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
             if (!ch.Users.Contains(user))
             {
@@ -241,6 +243,36 @@ namespace Workplace_Collaboration.Controllers
             else
             {
                 TempData["message"] = "Already part of this Channel";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("Index");
+            }
+        }
+        //Method Allowing user to leave a channel
+        //No View, done through Channel Interface
+        [Authorize(Roles = "User,Moderator,Admin")]
+        [HttpPost]
+        public ActionResult Leave(int id) 
+        {
+            Channel ch = db.Channels.Include("Users")
+                                     .Include("Moderators")
+                                     .Where(ch => ch.Id == id)
+                                     .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                                     .First();
+            if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
+            if (ch.Users.Contains(user))
+            {
+                ch.Users.Remove(user);
+                if (ch.Moderators == null) ch.Moderators = new Collection<ApplicationUser>();
+                if (ch.Moderators.Contains(user)) ch.Moderators.Remove(user);
+                db.SaveChanges();
+                TempData["message"] = "Channel Left";
+                TempData["messageType"] = "alert-success";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["message"] = "Can't leave a Channel you are not a part of";
                 TempData["messageType"] = "alert-danger";
                 return RedirectToAction("Index");
             }
