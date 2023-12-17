@@ -60,6 +60,7 @@ namespace Workplace_Collaboration.Controllers
         {
             Channel channel = db.Channels.Include("Users")
                                          .Include("Moderators")
+                                         .Include("ChannelHasCategories.Category")
                                          .Where(ch => ch.Id == id)
                                          .First();
             ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
