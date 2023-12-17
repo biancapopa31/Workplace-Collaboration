@@ -1,19 +1,31 @@
 ﻿@model Workplace_Collaboration.Models.Channel
+@if (TempData["message"] != null)
+{
+    <div class="alert @ViewBag.Alert p-3 rounded-3 text-center mb-5">
+        @ViewBag.Message
+    </div>
+}
 <div class="container">
 @foreach(var user in ViewBag.ChannelUsers)
 {
         <div class="d-flex flex-row bg-info p-3 text-white justify-content-between">
-        <div class="text-white">
-            @user.UserName 
-        </div>
-        @if (Model.Moderators.Contains(user))
-        {
-            <div class="text-danger">Moderator</div>
-        }
-        else
-        {
-            <div class="text-muted">User</div>
-        }
+            <div class="text-white">
+                @user.UserName 
+            </div>
+            @if (Model.Moderators.Contains(user))
+            {
+                <div class="text-danger">Moderator</div>
+            }
+            else
+            {
+                <div class="text-muted">User</div>
+            }
+            @if(User.IsInRole("Admin") || (ViewBag.isModerator && !ViewBag.Moderators.Contains(user)) )
+            {
+                <form method="post" action="/Channel/Remove/@Model.Id/@user.Id">
+                    <button class="btn btn-danger" type="submit">Remove User</button>
+                </form>
+            }
         </div>
     <br />
     <br />

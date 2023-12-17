@@ -214,7 +214,12 @@ namespace Workplace_Collaboration.Controllers
                              .Include("Moderators")
                              .Where(ch => ch.Id == id)
                              .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                                        .First();
             ViewBag.ChannelUsers = ch.Users;
+            if (ch.Moderators.Contains(user)) ViewBag.isModerator = true;
+            else ViewBag.isModerator = false;
+            ViewBag.Moderators = ch.Moderators;
             return View(ch); 
         }
         //Method that allows user to join a channel that they have not yet joined
@@ -277,5 +282,56 @@ namespace Workplace_Collaboration.Controllers
                 return RedirectToAction("Index");
             }
         }
+        [Authorize(Roles = "User,Moderator,Admin")]
+        [HttpPost]
+        public ActionResult Remove(int id, string sndid)
+        {
+            Channel ch = db.Channels.Include("Users")
+                                     .Include("Moderators")
+                                     .Where(ch => ch.Id == id)
+                                     .First();
+            ApplicationUser target = db.ApplicationUsers.Where(u => u.Id == sndid)
+                                                     .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                                     .First();
+            if(!ch.Moderators.Contains(user) && !User.IsInRole("Admin"))
+            {
+                TempData["message"] = "You do not have the required permissions to remove this user";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("ShowUsers",id);
+            }
+            if(ch.Moderators.Contains(target) && !User.IsInRole("Admin"))
+            {
+                TempData["message"] = "You do not have the required permissions to remove this user";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("ShowUsers", id);
+            }
+            if (sndid== _userManager.GetUserId(User))
+            {
+                TempData["message"] = "Can't Remove Yourself. Try Leaving the Channel Instead";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("ShowUsers", id);
+            }
+            if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
+            if (ch.Users.Contains(target))
+            {
+                ch.Users.Remove(target);
+                if (ch.Moderators == null) ch.Moderators = new Collection<ApplicationUser>();
+                if (ch.Moderators.Contains(target)) ch.Moderators.Remove(target);
+                db.SaveChanges();
+                TempData["message"] = "User Successfully Removed";
+                TempData["messageType"] = "alert-success";
+                //Again Placeholder Because I can't get redirects to work apparently
+                //God Help Me
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["message"] = "Can't remove this User";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("ShowUsers", id);
+            }
+        }
+
     }
 }
