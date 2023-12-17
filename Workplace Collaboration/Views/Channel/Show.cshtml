@@ -18,13 +18,16 @@
 
     <div class="d-flex flex-row justify-content-between p-3 border-1 border-top">
 
-        <a class="btn btn-success" href="/Channel/Edit/@Model.Id">Edit Channel</a>
-
-        <form method="post" action="/Channel/Delete/@Model.Id">
-
-            <button class="btn btn-danger" type="submit">Delete Channel</button>
-
-        </form>
-
+        @if (ViewBag.isAuthority)
+        {
+            <a class="btn btn-success" href="/Channel/Edit/@Model.Id">Edit Channel</a>
+        }
+        <a class="btn btn-info text-white" href="/Channel/ShowUsers/@Model.Id">Show Users</a>
+        @if (ViewBag.isAuthority)
+        {
+            <form method="post" action="/Channel/Delete/@Model.Id">
+                <button class="btn btn-danger" type="submit">Delete Channel</button>
+            </form>
+        }
     </div>
 </div>

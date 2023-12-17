@@ -1,0 +1,21 @@
+﻿@model Workplace_Collaboration.Models.Channel
+<div class="container">
+@foreach(var user in ViewBag.ChannelUsers)
+{
+        <div class="d-flex flex-row bg-info p-3 text-white justify-content-between">
+        <div class="text-white">
+            @user.UserName 
+        </div>
+        @if (Model.Moderators.Contains(user))
+        {
+            <div class="text-danger">Moderator</div>
+        }
+        else
+        {
+            <div class="text-muted">User</div>
+        }
+        </div>
+    <br />
+    <br />
+}
+</div>
