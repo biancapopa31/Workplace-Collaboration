@@ -30,6 +30,17 @@ namespace Workplace_Collaboration.Controllers
 
             _roleManager = roleManager;
         }
+
+        //Checker method to see whether an user is part of a bigger list of users
+        //Useful in determining if user is a moderator of a certain channel
+        [NonAction]
+        public bool isUserinList(ICollection<ApplicationUser> users, string user_id)
+        {
+            foreach (ApplicationUser member in users)
+                if (member.Id == user_id) return true;
+            return false;
+        }
+        [NonAction]
         public IActionResult Index()
         {
             return View();
@@ -215,8 +226,37 @@ namespace Workplace_Collaboration.Controllers
                 return View(rqCategory);
             }
 
+        }
 
+        [HttpPost]
+        [Authorize(Roles = "User,Moderator,Admin")]
+        public ActionResult Delete(int channelId, int categoryId)
+        {
+            Channel ch = db.Channels.Include("Users")
+                                         .Include("Moderators")
+                                         .Where(ch => ch.Id == channelId)
+                                         .First();
+            //If user is moderator or admin, then deletion can proceed
+            if (isUserinList(ch.Moderators, _userManager.GetUserId(User)) || User.IsInRole("Admin"))
+            {
+                ChannelHasCategory cHc =db.ChannelHasCategories
+                                            .Where(chc => chc.ChannelId == channelId && chc.CategoryId == categoryId)
+                                            .First();
+
+                db.ChannelHasCategories.Remove(cHc);
+                db.SaveChanges();
+                TempData["message"] = "Category has been deleted";
+                TempData["messageType"] = "alert-success";
+            }
+            //Otherwise turn down deletion request and return to Index page
+            else
+            {
+                TempData["message"] = "You do not have the required permissions to delete this category";
+                TempData["messageType"] = "alert-danger";
+            }
+            return Redirect(Url.Action("Show", "Channel", new { id = channelId }));
 
         }
     }
+
 }

@@ -36,7 +36,7 @@
                             <a class="btn btn-outline-primary" href=""><i class="bi bi-pencil-square"></i>Edit</a>
                         </div>
                         <div>
-                            <form method="post" action="">
+                            <form method="post" action=@Url.Action("Delete", "Category", new { channelId = @Model.Id, categoryId = cat.Category.Id})>
 
                                 <button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash"></i>Delete</button>
 
