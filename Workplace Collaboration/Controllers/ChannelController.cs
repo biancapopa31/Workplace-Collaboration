@@ -68,6 +68,7 @@ namespace Workplace_Collaboration.Controllers
         {
             Channel channel = db.Channels.Include("Users")
                                          .Include("Moderators")
+                                         .Include("ChannelHasCategories.Category")
                                          .Where(ch => ch.Id == id)
                                          .First();
             ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
@@ -146,9 +147,11 @@ namespace Workplace_Collaboration.Controllers
             ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
                                       .First();
             Channel ch = db.Channels.Include("Users")
-                                          .Include("Moderators")
-                                          .Where(ch => ch.Id == id)
-                                          .First();
+                                    .Include("Moderators")
+                                    .Include("ChannelHasCategories.Category")
+                                    .Where(ch => ch.Id == id)
+                                    .First();
+
             if (ch.Moderators.Contains(user) || User.IsInRole("Admin"))
             //if (User.IsInRole("Admin"))
             {
@@ -171,6 +174,7 @@ namespace Workplace_Collaboration.Controllers
         {
             Channel ch = db.Channels.Include("Users")
                                           .Include("Moderators")
+                                          .Include("ChannelHasCategories.Category")
                                           .Where(ch => ch.Id == id)
                                           .First();
             ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))

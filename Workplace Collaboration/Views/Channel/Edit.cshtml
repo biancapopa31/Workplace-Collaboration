@@ -25,6 +25,32 @@
                 @Html.ValidationMessageFor(m => m.Description, null, new { @class = "text-danger" })
                 <br />
 
+                @Html.Label("Categories", "Categories")
+                @foreach (var cat in Model.ChannelHasCategories)
+                {
+                    <a class="ms-4 p-1 mb-2 bg-secondary text-black rounded-2 text-decoration-none d-block w-25 linkChaturi" style="--bs-bg-opacity: .4;" >
+                        <i class="bi bi-hash"></i>@cat.Category.Name
+                    </a>
+                    <div class="ms-4 d-flex">
+                        <div>
+                            <a class="btn btn-outline-primary" href=@Url.Action("Edit", "Category", new { channelId = @Model.Id, categoryId = cat.Category.Id})><i class="bi bi-pencil-square"></i>Edit</a>
+                        </div>
+                        <div>
+                            <form method="post" action=@Url.Action("Delete", "Category", new { channelId = @Model.Id, categoryId = cat.Category.Id})>
+
+                                <button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash"></i>Delete</button>
+
+                            </form>
+                        </div>
+                    </div>
+                }
+                <br/>
+                <div>
+                    <a class="btn btn-outline-primary" href=@Url.Action("New", "Category", new { channelId = @Model.Id})><i class="bi bi-pencil-square"></i>Add a category</a>
+                </div>
+
+                
+
                 <br />
 
                 <button class="btn btn-sm btn-success" type="submit">Modify Channel</button>
