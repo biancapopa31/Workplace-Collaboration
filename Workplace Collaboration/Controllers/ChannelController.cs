@@ -29,6 +29,9 @@ namespace Workplace_Collaboration.Controllers
 
             _roleManager = roleManager;
         }
+
+
+
         [NonAction]
         ApplicationUser getUser(string id)
         {
@@ -38,6 +41,9 @@ namespace Workplace_Collaboration.Controllers
             }
             return null;
         }
+
+
+
         [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult Index()
         {
@@ -54,6 +60,8 @@ namespace Workplace_Collaboration.Controllers
 
             return View();
         }
+
+
 
         [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult Show(int id)
@@ -73,6 +81,9 @@ namespace Workplace_Collaboration.Controllers
             else ViewBag.isAuthority = false;
             return View(channel);
         }
+
+
+
         //Method to access the form destined for creating channels
         [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult New()
@@ -80,6 +91,9 @@ namespace Workplace_Collaboration.Controllers
             var ch= new Channel();
             return View(ch);
         }
+
+
+
         //Method for creation of new channels 
         [Authorize(Roles = "User,Moderator,Admin")]
         [HttpPost]
@@ -112,6 +126,8 @@ namespace Workplace_Collaboration.Controllers
                 return RedirectToAction("Index"); 
             }
         }
+
+
         //Checker method to see whether an user is part of a bigger list of users
         //Useful in determining if user is a moderator of a certain channel
         [NonAction]
@@ -121,6 +137,8 @@ namespace Workplace_Collaboration.Controllers
                 if (member.Id == user_id) return true;
             return false;
         }
+
+
         //Method to initiate editing of channel with a check for permissions
         [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult Edit(int id)
@@ -144,6 +162,8 @@ namespace Workplace_Collaboration.Controllers
             }
 
         }
+
+
         //Updating the database with data received from edit form
         [HttpPost]
         [Authorize(Roles = "User,Moderator,Admin")]
@@ -179,6 +199,8 @@ namespace Workplace_Collaboration.Controllers
                 return View(requestChannel);
             }
         }
+
+
         //Method for the deletion of a channel using its id (used only through the interface)
         [HttpPost]
         [Authorize(Roles = "User,Moderator,Admin")]
@@ -206,6 +228,8 @@ namespace Workplace_Collaboration.Controllers
                 return Redirect("/Channel/Show/" + id);
             }
         }
+
+
         //Method to show the members of a channel (pretty rudimentary atm)
         [Authorize(Roles = "User,Moderator,Admin")]
         public ActionResult ShowUsers(int id)
@@ -222,6 +246,8 @@ namespace Workplace_Collaboration.Controllers
             ViewBag.Moderators = ch.Moderators;
             return View(ch); 
         }
+
+
         //Method that allows user to join a channel that they have not yet joined
         [Authorize(Roles = "User,Moderator,Admin")]
         [HttpPost]
@@ -250,6 +276,8 @@ namespace Workplace_Collaboration.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+
         //Method Allowing user to leave a channel
         //No View, done through Channel Interface
         [Authorize(Roles = "User,Moderator,Admin")]
@@ -280,6 +308,9 @@ namespace Workplace_Collaboration.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+
+
         [Authorize(Roles = "User,Moderator,Admin")]
         [HttpPost]
         public ActionResult Remove(int id, string sndid)
@@ -327,6 +358,95 @@ namespace Workplace_Collaboration.Controllers
                 TempData["messageType"] = "alert-danger";
                 return Redirect("/Channel/ShowUsers/" + id);
             }
+        }
+
+
+        [Authorize(Roles = "User,Moderator,Admin")]
+        [HttpPost]
+        public ActionResult Promote(int id, string sndid) 
+        {
+            Channel ch = db.Channels.Include("Users")
+                         .Include("Moderators")
+                         .Where(ch => ch.Id == id)
+                         .First();
+            ApplicationUser target = db.ApplicationUsers.Where(u => u.Id == sndid)
+                                                     .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                                     .First();
+            if (!ch.Moderators.Contains(user) && !User.IsInRole("Admin"))
+            {
+                TempData["message"] = "You do not have the required permissions to promote this user";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            if (ch.Moderators.Contains(target))
+            {
+                TempData["message"] = "You cannot promote this user any further";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            if (sndid == _userManager.GetUserId(User))
+            {
+                TempData["message"] = "No room to promote yourself any further";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
+            if (ch.Users.Contains(target))
+            {
+                if (ch.Moderators == null) ch.Moderators = new Collection<ApplicationUser>();
+                if (!ch.Moderators.Contains(target)) ch.Moderators.Add(target);
+                db.SaveChanges();
+                TempData["message"] = "User Successfully Promoted";
+                TempData["messageType"] = "alert-success";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            else
+            {
+                TempData["message"] = "This User isn't part of this Channel";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [HttpPost]
+        public ActionResult Demote(int id, string sndid)
+        {
+            Channel ch = db.Channels.Include("Users")
+                         .Include("Moderators")
+                         .Where(ch => ch.Id == id)
+                         .First();
+            ApplicationUser target = db.ApplicationUsers.Where(u => u.Id == sndid)
+                                                     .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                                     .First();
+            if (!User.IsInRole("Admin"))
+            {
+                TempData["message"] = "You do not have the required permissions to demote this user";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            if (!ch.Moderators.Contains(target))
+            {
+                TempData["message"] = "You cannot demote this user any further";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            if (sndid == _userManager.GetUserId(User))
+            {
+                TempData["message"] = "Why Would You Demote Yourself?";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            ch.Moderators.Remove(target);
+            db.SaveChanges();
+            TempData["message"] = "User Successfully Demoted";
+            TempData["messageType"] = "alert-success";
+            return Redirect("/Channel/ShowUsers/" + id);
         }
 
     }
