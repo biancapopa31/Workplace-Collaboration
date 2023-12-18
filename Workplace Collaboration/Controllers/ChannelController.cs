@@ -140,7 +140,7 @@ namespace Workplace_Collaboration.Controllers
             {
                 TempData["message"] = "You do not have the required permissions to make alterations to this channel";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("Index");
+                return Redirect("/Channel/Show/" + id);
             }
 
         }
@@ -165,13 +165,13 @@ namespace Workplace_Collaboration.Controllers
                     TempData["message"] = "Channel modified successfully";
                     TempData["messageType"] = "alert-success";
                     db.SaveChanges();
-                    return RedirectToAction("Index");
+                    return Redirect("/Channel/Show/" + id);
                 }
                 else
                 {
                     TempData["message"] = "You do not have the required permissions to make alterations to this channel";
                     TempData["messageType"] = "alert-danger";
-                    return RedirectToAction("Index");
+                    return Redirect("/Channel/Show/" + id);
                 }
             }
             else
@@ -198,12 +198,12 @@ namespace Workplace_Collaboration.Controllers
                 TempData["messageType"] = "alert-success";
                 return RedirectToAction("Index");
             }
-            //Otherwise turn down deletion request and return to Index page
+            //Otherwise turn down deletion request and return to Show page
             else
             {
                 TempData["message"] = "You do not have the required permissions to delete this channel";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("Index");
+                return Redirect("/Channel/Show/" + id);
             }
         }
         //Method to show the members of a channel (pretty rudimentary atm)
@@ -241,9 +241,7 @@ namespace Workplace_Collaboration.Controllers
                 db.SaveChanges();
                 TempData["message"] = "Channel Joined";
                 TempData["messageType"] = "alert-success";
-                //Redirects to index because it breaks when sent to Show/ch.Id
-                //Needs Fixing
-                return RedirectToAction("Index");
+                return Redirect("/Channel/Show/" + id);
             }
             else
             {
@@ -298,19 +296,19 @@ namespace Workplace_Collaboration.Controllers
             {
                 TempData["message"] = "You do not have the required permissions to remove this user";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("ShowUsers",id);
+                return Redirect("/Channel/ShowUsers/" + id);
             }
             if(ch.Moderators.Contains(target) && !User.IsInRole("Admin"))
             {
                 TempData["message"] = "You do not have the required permissions to remove this user";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("ShowUsers", id);
+                return Redirect("/Channel/ShowUsers/" + id);
             }
             if (sndid== _userManager.GetUserId(User))
             {
                 TempData["message"] = "Can't Remove Yourself. Try Leaving the Channel Instead";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("ShowUsers", id);
+                return Redirect("/Channel/ShowUsers/" + id);
             }
             if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
             if (ch.Users.Contains(target))
@@ -321,15 +319,13 @@ namespace Workplace_Collaboration.Controllers
                 db.SaveChanges();
                 TempData["message"] = "User Successfully Removed";
                 TempData["messageType"] = "alert-success";
-                //Again Placeholder Because I can't get redirects to work apparently
-                //God Help Me
-                return RedirectToAction("Index");
+                return Redirect("/Channel/ShowUsers/" + id);
             }
             else
             {
                 TempData["message"] = "Can't remove this User";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("ShowUsers", id);
+                return Redirect("/Channel/ShowUsers/" + id);
             }
         }
 
