@@ -73,36 +73,18 @@ namespace Workplace_Collaboration.Controllers
         }
 
 
-        // Action for adding new messages NOT WORKING don't know why!?!?!?!??!?!
+        // Action for adding new messages
         [HttpPost]
-        [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult Show([FromForm] Message message)
         {
             message.SentDate = DateTime.Now;
             message.UserId = _userManager.GetUserId(User);
 
-            //debug
-            var existingChannelHasCategory = db.ChannelHasCategories
-                .FirstOrDefault(chc => chc.ChannelId == message.ChannelId && chc.CategoryId == message.CategoryId && chc.Id == message.ChannelHasCategoryId);
-
-            if (existingChannelHasCategory == null)
-            {
-                // Handle the case where the provided ChannelHasCategoryId does not exist
-                ViewBag.Alert = TempData["messageType"] = "alert-danger";
-                ViewBag.Message = TempData["message"] = "Nu exisata FK";
-
-
-                return Redirect(Url.Action("Show", "Category", new { channelId = message.ChannelId, categoryId = message.CategoryId }));
-
-            }
-            //debug
 
 
             if (ModelState.IsValid)
             {
-                System.Diagnostics.Debug.WriteLine($"Message.ChannelId: {message.ChannelId}");
-                System.Diagnostics.Debug.WriteLine($"Message.CategoryId: {message.CategoryId}");
-                System.Diagnostics.Debug.WriteLine($"Message.ChannelHasCatId: {message.ChannelHasCategoryId}");
                 db.Messages.Add(message);
                 db.SaveChanges();
                 return Redirect(Url.Action("Show", "Category", new { channelId = message.ChannelId, categoryId = message.CategoryId }));

@@ -47,10 +47,18 @@ namespace Workplace_Collaboration.Data
                 .WithMany(e => e.ChannelHasCategories)
                 .HasForeignKey(e => e.CategoryId);
 
-            modelBuilder.Entity<Message>()
-            .HasOne(e => e.ChannelHasCategory)
-            .WithMany(e => e.Messages)
-            .HasForeignKey(e => new { e.ChannelHasCategoryId, e.ChannelId, e.CategoryId });
+            modelBuilder.Entity<ChannelHasCategory>()
+                .HasMany(e => e.Messages)
+                .WithOne(e => e.ChannelHasCategory)
+                .HasPrincipalKey(e => new { e.Id, e.CategoryId, e.ChannelId })
+                .HasForeignKey(e => new {e.ChannelHasCategoryId, e.CategoryId, e.ChannelId })
+                .IsRequired();
+            
+
+            //modelBuilder.Entity<Message>()
+            //.HasOne(e => e.ChannelHasCategory)
+            //.WithMany(e => e.Messages)
+            //.HasForeignKey(e => new { e.ChannelHasCategoryId, e.ChannelId, e.CategoryId });
         }
 
 
