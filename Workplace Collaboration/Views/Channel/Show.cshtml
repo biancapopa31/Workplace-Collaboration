@@ -34,6 +34,9 @@
             <a class="btn btn-success" href="/Channel/Edit/@Model.Id">Edit Channel</a>
         }
         <a class="btn btn-info text-white" href="/Channel/ShowUsers/@Model.Id">Show Users</a>
+        <form method="post" action="/Channel/Leave/@Model.Id">
+            <button class="btn btn-danger" type="submit">Leave Channel</button>
+        </form>
         @if (ViewBag.isAuthority)
         {
             <form method="post" action="/Channel/Delete/@Model.Id">
