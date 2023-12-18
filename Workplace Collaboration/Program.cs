@@ -48,7 +48,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Channel}/{action=Index}/{id?}");
+    pattern: "{controller=Channel}/{action=Index}/{id?}/{sndid?}");
 app.MapRazorPages();
 
 app.Run();
