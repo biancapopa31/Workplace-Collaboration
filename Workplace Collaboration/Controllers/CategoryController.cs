@@ -228,6 +228,33 @@ namespace Workplace_Collaboration.Controllers
 
         }
 
+        [Authorize(Roles = "User,Moderator,Admin")]
+        public IActionResult Edit(int channelId, int categoryId)
+        {
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                      .First();
+
+            Channel ch = db.Channels.Include("Users")
+                                    .Include("Moderators")
+                                    .Where(ch => ch.Id == channelId)
+                                    .First();
+
+            //Nu e gata inca trebuie implementat
+            if (ch.Moderators.Contains(user) || User.IsInRole("Admin"))
+            {
+                return Redirect(Url.Action("Show", "Channel", new { id = channelId }));
+            }
+            else
+            {
+                TempData["message"] = "You do not have the required permissions to make alterations to this category";
+                TempData["messageType"] = "alert-danger";
+                return Redirect(Url.Action("Show", "Channel", new { id = channelId }));
+
+            }
+
+        }
+
+
         [HttpPost]
         [Authorize(Roles = "User,Moderator,Admin")]
         public ActionResult Delete(int channelId, int categoryId)
