@@ -190,12 +190,24 @@ namespace Workplace_Collaboration.Controllers
         {
             Channel ch = db.Channels.Include("Users")
                                          .Include("Moderators")
+                                         .Include("ChannelHasCategories.Messages")
                                          .Where(ch => ch.Id == id)
                                          .First();
             //If user is moderator or admin, then deletion can proceed
             if (isUserinList(ch.Moderators, _userManager.GetUserId(User)) || User.IsInRole("Admin"))
             //if (User.IsInRole("Admin"))
             {
+                //Delete all categories from channel
+                foreach (var cHc in ch.ChannelHasCategories)
+                {
+                    //Delete messages from each Category
+                    foreach(var msg in cHc.Messages)
+                    {
+                        db.Messages.Remove(msg);
+                    }
+
+                    db.ChannelHasCategories.Remove(cHc);
+                }
                 db.Channels.Remove(ch);
                 db.SaveChanges();
                 TempData["message"] = "Channel has been deleted";

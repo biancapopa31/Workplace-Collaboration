@@ -9,9 +9,8 @@ namespace Workplace_Collaboration.Models
         public string? UserId { get; set; }
         public string Content { get; set; }
         public int? ChannelHasCategoryId { get; set; }
-        public int? ChannelId { get; set; }
         public int? CategoryId { get; set; }
-
+        public int? ChannelId { get; set; }
 
         public DateTime? SentDate { get; set; }
 

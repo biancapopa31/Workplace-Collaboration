@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Workplace_Collaboration.Data;
 
@@ -11,9 +12,10 @@ using Workplace_Collaboration.Data;
 namespace Workplace_Collaboration.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231218180353_test")]
+    partial class test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -336,15 +338,12 @@ namespace Workplace_Collaboration.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("CategoryId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("ChannelHasCategoryId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("ChannelId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -361,7 +360,7 @@ namespace Workplace_Collaboration.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("ChannelHasCategoryId", "CategoryId", "ChannelId");
+                    b.HasIndex("ChannelHasCategoryId", "ChannelId", "CategoryId");
 
                     b.ToTable("Messages");
                 });
@@ -474,9 +473,7 @@ namespace Workplace_Collaboration.Migrations
 
                     b.HasOne("Workplace_Collaboration.Models.ChannelHasCategory", "ChannelHasCategory")
                         .WithMany("Messages")
-                        .HasForeignKey("ChannelHasCategoryId", "CategoryId", "ChannelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChannelHasCategoryId", "ChannelId", "CategoryId");
 
                     b.Navigation("ChannelHasCategory");
 
