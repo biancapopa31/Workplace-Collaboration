@@ -220,6 +220,7 @@ namespace Workplace_Collaboration.Controllers
                                     .Include("ChannelHasCategories.Category")
                                     .Where(ch => ch.Id == channelId)
                                     .First();
+            ViewBag.ChannelName = ch.Name;
 
             if (TempData.ContainsKey("message"))
             {
