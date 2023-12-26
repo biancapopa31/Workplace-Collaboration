@@ -200,8 +200,6 @@ namespace Workplace_Collaboration.Controllers
             }
             else
             {
-                TempData["message"] = "There was an error";
-                TempData["messageType"] = "alert-danger";
                 return View(requestChannel);
             }
         }

@@ -19,7 +19,7 @@
                     </a>
                     <div class="ms-2 d-flex">
                         <div>
-                            <a class="btn btn-outline-primary" href=@Url.Action("Edit", "Category", new { channelId = @Model.Id, categoryId = cat.Category.Id})><i class="bi bi-pencil-square"></i>Edit</a>
+                            <a class="btn btn-outline-primary" href=@Url.Action("EditCategory", "Category", new { channelId = @Model.Id, categoryId = cat.Category.Id})><i class="bi bi-pencil-square"></i>Edit</a>
                         </div>
                         <div>
                             @using (Html.BeginForm("Delete", "Category", new { channelId = Model.Id, categoryId = cat.Category.Id }, FormMethod.Post))
