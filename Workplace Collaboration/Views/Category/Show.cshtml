@@ -35,7 +35,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <form method="post" action="@Url.Action("Show", "Category", new { channelId = @Model.Channel.Id, categoryId = @Model.Category.Id })" >
+                <form id="messageForm" method="post" action="@Url.Action("Show", "Category", new { channelId = @Model.Channel.Id, categoryId = @Model.Category.Id })">
                     <div class="input-group mb-3">
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                         <input type="hidden" name="ChannelHasCategoryId" value=@Model.Id />
@@ -43,7 +43,7 @@
                         <input type="hidden" name="CategoryId" value=@Model.Category.Id />
 
 
-                        <textarea class="form-control" placeholder="Type your message..." name="Content"> </textarea>
+                        <input type="text" class="form-control" placeholder="Type your message..." name="Content"> </input>
                         @Html.ValidationMessage("Content", null, new { @class = "text-danger"})
 
 
@@ -57,3 +57,16 @@
         </div>
     </div>
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var contentInput = document.querySelector('#messageForm input[name="Content"]');
+
+        contentInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('messageForm').submit();
+            }
+        });
+    });
+</script>
