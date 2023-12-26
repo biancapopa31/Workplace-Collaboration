@@ -1,4 +1,5 @@
 ﻿@model Workplace_Collaboration.Models.Channel
+
 @if (TempData["message"] != null)
 {
     <div class="alert @ViewBag.Alert p-3 rounded-3 text-center mb-5">
@@ -32,6 +33,10 @@
         @if (ViewBag.isAuthority)
         {
             <a class="btn btn-success" href="/Channel/Edit/@Model.Id">Edit Channel</a>
+        }
+        @if (ViewBag.isAuthority)
+        {
+            <a class="btn btn-success" href=@Url.Action("EditCategoriesFromChannel", "Category", new { channelId = @Model.Id})>Edit Categories</a>
         }
         <a class="btn btn-info text-white" href="/Channel/ShowUsers/@Model.Id">Show Users</a>
         <form method="post" action="/Channel/Leave/@Model.Id">

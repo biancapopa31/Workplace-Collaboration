@@ -154,7 +154,8 @@ namespace Workplace_Collaboration.Controllers
                     {
                         TempData["message"] = "This category already exists";
                         TempData["messageType"] = "alert-danger";
-                        return Redirect(Url.Action("Show", "Channel", new { id = channelId }));
+                        return Redirect(Url.Action("EditCategoriesFromChannel", "Category", new { channelId = channelId }));
+
                     }
                     
                     foreach(var cat in allCategories)
@@ -196,7 +197,7 @@ namespace Workplace_Collaboration.Controllers
 
                 TempData["message"] = "Category added successfully";
                 TempData["messageType"] = "alert-success";
-                return Redirect(Url.Action("Show", "Channel", new { id = channelId }));
+                return Redirect(Url.Action("EditCategoriesFromChannel", "Category", new { channelId = channelId }));
             }
             else
             {
@@ -209,9 +210,38 @@ namespace Workplace_Collaboration.Controllers
             }
 
         }
+        [Authorize(Roles = "User,Moderator,Admin")]
+        public IActionResult EditCategoriesFromChannel(int channelId)
+        {
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                     .First();
+            Channel ch = db.Channels.Include("Users")
+                                    .Include("Moderators")
+                                    .Include("ChannelHasCategories.Category")
+                                    .Where(ch => ch.Id == channelId)
+                                    .First();
+
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Message = TempData["message"];
+                ViewBag.Alert = TempData["messageType"];
+            }
+
+            if (ch.Moderators.Contains(user) || User.IsInRole("Admin"))
+            //if (User.IsInRole("Admin"))
+            {
+                return View(ch);
+            }
+            else
+            {
+                TempData["message"] = "You do not have the required permissions to make alterations to this channel";
+                TempData["messageType"] = "alert-danger";
+                return Redirect(Url.Action("Show", "Channel", new { id = channelId }));
+            }
+        }
 
         [Authorize(Roles = "User,Moderator,Admin")]
-        public IActionResult Edit(int channelId, int categoryId)
+        public IActionResult EditCategory(int channelId, int categoryId)
         {
             ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
                                       .First();
@@ -224,13 +254,13 @@ namespace Workplace_Collaboration.Controllers
             //Nu e gata inca trebuie implementat
             if (ch.Moderators.Contains(user) || User.IsInRole("Admin"))
             {
-                return Redirect(Url.Action("Show", "Channel", new { id = channelId }));
+                return Redirect(Url.Action("EditCategoriesFromChannel", "Category", new { channelId = channelId }));
             }
             else
             {
                 TempData["message"] = "You do not have the required permissions to make alterations to this category";
                 TempData["messageType"] = "alert-danger";
-                return Redirect(Url.Action("Show", "Channel", new { id = channelId }));
+                return Redirect(Url.Action("EditCategoriesFromChannel", "Category", new { channelId = channelId }));
 
             }
 
@@ -249,8 +279,14 @@ namespace Workplace_Collaboration.Controllers
             if (isUserinList(ch.Moderators, _userManager.GetUserId(User)) || User.IsInRole("Admin"))
             {
                 ChannelHasCategory cHc =db.ChannelHasCategories
+                                            .Include("Messages")
                                             .Where(chc => chc.ChannelId == channelId && chc.CategoryId == categoryId)
                                             .First();
+                //Delete the messeges from category
+                foreach(var msg in cHc.Messages)
+                {
+                    db.Messages.Remove(msg);
+                }
 
                 db.ChannelHasCategories.Remove(cHc);
                 db.SaveChanges();
@@ -263,7 +299,7 @@ namespace Workplace_Collaboration.Controllers
                 TempData["message"] = "You do not have the required permissions to delete this category";
                 TempData["messageType"] = "alert-danger";
             }
-            return Redirect(Url.Action("Show", "Channel", new { id = channelId }));
+            return Redirect(Url.Action("EditCategoriesFromChannel", "Category", new { channelId = channelId }));
 
         }
     }
