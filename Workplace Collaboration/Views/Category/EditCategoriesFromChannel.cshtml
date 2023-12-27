@@ -1,0 +1,46 @@
+﻿
+<h2 class="text-center mt-5">Edit Categories from @ViewBag.ChannelName</h2>
+<br />
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @ViewBag.Alert p-3 rounded-3 text-center mb-5">
+        @ViewBag.Message
+    </div>
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-3">
+                @foreach (var cat in Model.ChannelHasCategories)
+                {
+                    <a class="p-1 mb-2 bg-secondary text-black rounded-2 text-decoration-none d-block w-25 linkChaturi" style="--bs-bg-opacity: .4;">
+                        <i class="bi bi-hash"></i>@cat.Category.Name
+                    </a>
+                    <div class="ms-2 d-flex">
+                        <div>
+                            <a class="btn btn-outline-primary" href=@Url.Action("EditCategory", "Category", new { channelId = @Model.Id, categoryId = cat.Category.Id})><i class="bi bi-pencil-square"></i>Edit</a>
+                        </div>
+                        <div>
+                            @using (Html.BeginForm("Delete", "Category", new { channelId = Model.Id, categoryId = cat.Category.Id }, FormMethod.Post))
+                            {
+                                <button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash"></i>Delete</button>
+                            }
+                        </div>
+                    </div>
+                    <br />
+
+                }
+                <br />
+                <div>
+                    <a class="btn btn-outline-primary" href=@Url.Action("New", "Category", new { channelId = @Model.Id})><i class="bi bi-pencil-square"></i>Add a category</a>
+                </div>
+
+                <br />
+
+            <a class="btn btn-sm btn-success" href=@Url.Action("Show", "Channel", new { id = @Model.Id})>Back to channel</a>
+
+        </div>
+    </div>
+</div>
+
