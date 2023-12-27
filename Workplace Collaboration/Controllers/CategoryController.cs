@@ -354,9 +354,8 @@ namespace Workplace_Collaboration.Controllers
                         newcHc.CategoryId = newCategory.Id;
                         newcHc.ChannelId = channelId;
                         newcHc.AddDate = DateTime.Now;
-                        newcHc.Messages = cHc.Messages;
 
-                        db.ChannelHasCategories.Add(cHc);
+                        db.ChannelHasCategories.Add(newcHc);
                         db.SaveChanges();
 
                         //Move messages from old Category to new one
