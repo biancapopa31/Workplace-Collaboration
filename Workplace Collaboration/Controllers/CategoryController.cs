@@ -95,6 +95,7 @@ namespace Workplace_Collaboration.Controllers
         {
             ChannelHasCategory category = db.ChannelHasCategories
                                           .Include("Channel")
+                                          .Include("Channel.Moderators")
                                           .Include("Category")
                                           .Include("Messages")
                                           .Include("Messages.User")
@@ -110,8 +111,9 @@ namespace Workplace_Collaboration.Controllers
                 ViewBag.Message = TempData["message"];
                 ViewBag.Alert = TempData["messageType"];
             }
-            //  if (channel.Moderators.Contains(user) || User.IsInRole("Admin")) ViewBag.isAuthority = true;
-            //  else ViewBag.isAuthority = false;
+            if (category.Channel.Moderators.Contains(user) || User.IsInRole("Admin")) ViewBag.isAuthority = true;
+            else ViewBag.isAuthority = false;
+            ViewBag.currentUser = user;
 
             return View(category);
         }
