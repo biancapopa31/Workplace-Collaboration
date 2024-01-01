@@ -27,7 +27,7 @@
                         <div class="d-flex flex-row justify-content-between border-top">
                             <div class="message-bubble p-2">
                                 <strong><i class="bi bi-person"></i>@message.User.UserName:</strong> - <samall>@message.SentDate.ToString("hh:mm tt")</samall>
-                                <p> @message.Content </p>
+                                <p> @Html.Raw(message.Content) </p>
                             </div>
                             <div>
                                 @if (ViewBag.isAuthority || ViewBag.currentUser == message.User)
@@ -59,7 +59,7 @@
                         <input type="hidden" name="CategoryId" value=@Model.Category.Id />
 
 
-                        <input type="text" class="form-control" placeholder="Type your message..." name="Content"> </input>
+                        <textarea type="text" class="form-control summernote msgInputBox" placeholder="Type your message..." name="Content"> </textarea>
                         @Html.ValidationMessage("Content", null, new { @class = "text-danger"})
 
 

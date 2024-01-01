@@ -124,11 +124,10 @@ namespace Workplace_Collaboration.Controllers
         [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult Show([FromForm] Message message)
         {
-            message.SentDate = DateTime.Now;
-            message.UserId = _userManager.GetUserId(User);
-
             if (ModelState.IsValid)
             {
+                message.SentDate = DateTime.Now;
+                message.UserId = _userManager.GetUserId(User);
                 db.Messages.Add(message);
                 db.SaveChanges();
                 return Redirect(Url.Action("Show", "Category", new { channelId = message.ChannelId, categoryId = message.CategoryId }));
@@ -136,17 +135,10 @@ namespace Workplace_Collaboration.Controllers
             else
             {
 
-                ViewBag.Message = TempData["message"] = message.UserId;
+                ViewBag.Message = TempData["message"] = "Something went wrong";
                 ViewBag.Alert = TempData["messageType"] = "alert-danger";
 
-                ChannelHasCategory category = db.ChannelHasCategories
-                                          .Include("Channel")
-                                          .Include("Category")
-                                          .Include("Messages")
-                                          .Include("Messages.User")
-                                          .Where(chc => chc.ChannelId == message.ChannelId && chc.CategoryId == message.CategoryId)
-                                          .First();
-                return View(category);
+                return Redirect(Url.Action("Show", "Category", new { channelId = message.ChannelId, categoryId = message.CategoryId }));
             }
         }
 

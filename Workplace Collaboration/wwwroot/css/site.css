@@ -20,6 +20,25 @@ body {
 .message-container {
     display: flex;
     flex-direction: column;
-    height: 60vh; /* Set the maximum height for the chat container */
-    overflow-y: auto; /* Add a vertical scrollbar when content exceeds the height */
+    height: 50vh;
+    overflow-y: auto; 
 }
+.note-editor .dropdown-toggle::after {
+    display: none;
+}
+
+.msgInputBox{
+    width: 100vh;
+}
+
+.message-bubble p img{
+    max-height: 30vh !important;
+    width: auto !important;
+}
+
+.message-bubble p iframe {
+    max-height: 30vh !important;
+    width: auto;
+   
+}
+
