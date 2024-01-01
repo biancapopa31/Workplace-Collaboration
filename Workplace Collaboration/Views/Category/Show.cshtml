@@ -51,7 +51,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <form method="post" action="@Url.Action("Show", "Category")">
+                <form id="messageForm" method="post" action="@Url.Action("Show", "Category")">
                     <div class="input-group mb-3">
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                         <input type="hidden" name="ChannelHasCategoryId" value=@Model.Id />
@@ -64,7 +64,7 @@
 
 
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">Send</button>
+                            <button class="btn btn-primary" type="submit" onclick="validateAndSubmitForm(event)">Send</button>
                         </div>
                     </div>
                 </form>

@@ -20,7 +20,7 @@ body {
 .message-container {
     display: flex;
     flex-direction: column;
-    height: 50vh;
+    height: 55vh;
     overflow-y: auto; 
 }
 .note-editor .dropdown-toggle::after {
@@ -38,7 +38,7 @@ body {
 
 .message-bubble p iframe {
     max-height: 30vh !important;
-    width: auto;
+    width: auto ;
    
 }
 
