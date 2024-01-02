@@ -116,8 +116,23 @@ namespace Workplace_Collaboration.Controllers
                 //user.IsModerator.Add(ch);
                 if (user.Channels == null) user.Channels = new Collection<Channel>();
                 //user.Channels.Add(ch);
+                ch.CreationDate = DateTime.Now;
+
                 db.Channels.Add(ch);
                 db.SaveChanges();
+
+                //Add default category to channel
+
+                Category category = db.Categories.Where(c => c.Name == "default")
+                                                 .First();
+
+                ChannelHasCategory cHc = new ChannelHasCategory();
+                cHc.AddDate = DateTime.Now;
+                cHc.ChannelId = ch.Id;
+                cHc.CategoryId = category.Id;
+                db.ChannelHasCategories.Add(cHc);
+                db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
             else 

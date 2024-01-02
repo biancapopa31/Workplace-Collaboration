@@ -92,7 +92,7 @@ namespace Workplace_Collaboration.Controllers
             }
             else
             {
-                TempData["message"] = "There was a problem";
+                TempData["message"] = "Something went wrong";
                 TempData["messageType"] = "alert-danger";
             }
             return Redirect(Url.Action("Show", "Category", new { channelId = rqMessage.ChannelId, categoryId = rqMessage.CategoryId }));
