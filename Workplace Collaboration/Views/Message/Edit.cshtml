@@ -52,7 +52,10 @@
             <div class="col-md-12">
                 @using (Html.BeginForm(actionName: "Edit", controllerName: "Message",
                 method: FormMethod.Post,
-                routeValues: new { messageId = ViewBag.messageToEdit.Id }))
+                routeValues: new { messageId = ViewBag.messageToEdit.Id },
+                antiforgery: null,
+                htmlAttributes: new { id = "messageForm" })
+                )
                 {
                     <div class="input-group mb-3">
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
