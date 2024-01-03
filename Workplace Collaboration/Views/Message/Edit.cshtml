@@ -1,5 +1,4 @@
 ﻿
-
 @if (TempData["message"] != null)
 {
     <div class="alert @ViewBag.Alert p-3 rounded-3 text-center mb-5">
@@ -32,13 +31,13 @@
                             <div>
                                 @if (ViewBag.isAuthority || ViewBag.currentUser == message.User)
                                 {
-                                    @using (Html.BeginForm("Delete", "Message", new {channelId = Model.Channel.Id, categoryId = Model.Category.Id, messageId = message.Id}, FormMethod.Post))
+                                    @using (Html.BeginForm("Delete", "Message", new { channelId = Model.Channel.Id, categoryId = Model.Category.Id, messageId = message.Id }, FormMethod.Post))
                                     {
                                         <button class="btn btn-outline-danger btn-sm" type="submit"><i class="bi bi-trash"></i>Delete</button>
                                     }
                                 }
 
-                                @if(ViewBag.currentUser == message.User)
+                                @if (ViewBag.currentUser == message.User && ViewBag.messageToEdit != message)
                                 {
                                     <a class="btn btn-outline-primary btn-sm" href=@Url.Action("Edit", "Message", new { channelId = Model.Channel.Id, categoryId = Model.Category.Id, messageId = message.Id})><i class="bi bi-pencil-square"></i>Edit</a>
                                 }
@@ -51,15 +50,20 @@
 
         <div class="row">
             <div class="col-md-12">
-                <form id="messageForm" method="post" action="@Url.Action("Show", "Category")">
+                @using (Html.BeginForm(actionName: "Edit", controllerName: "Message",
+                method: FormMethod.Post,
+                routeValues: new { messageId = ViewBag.messageToEdit.Id },
+                antiforgery: null,
+                htmlAttributes: new { id = "messageForm" })
+                )
+                {
                     <div class="input-group mb-3">
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                         <input type="hidden" name="ChannelHasCategoryId" value=@Model.Id />
                         <input type="hidden" name="ChannelId" value=@Model.Channel.Id />
                         <input type="hidden" name="CategoryId" value=@Model.Category.Id />
 
-
-                        <textarea type="text" class="form-control summernote msgInputBox" placeholder="Type your message..." name="Content"> </textarea>
+                        <textarea type="text" class="form-control summernote" placeholder="Type your message..." name="Content">@Html.Raw(ViewBag.messageToEdit.Content)</textarea>
                         @Html.ValidationMessage("Content", null, new { @class = "text-danger"})
 
 
@@ -67,8 +71,8 @@
                             <button class="btn btn-primary" type="submit" onclick="validateAndSubmitForm(event)">Send</button>
                         </div>
                     </div>
-                </form>
-               
+                }
+
             </div>
         </div>
     </div>

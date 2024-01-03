@@ -80,6 +80,13 @@ namespace Workplace_Collaboration.Models
                     }
                 );
 
+                context.Categories.Add(
+                    new Category
+                    {
+                        Name = "default",
+                    }
+                );
+
                 context.SaveChanges();
 
             }
