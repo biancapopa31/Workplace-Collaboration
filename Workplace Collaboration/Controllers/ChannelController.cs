@@ -444,7 +444,6 @@ namespace Workplace_Collaboration.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        [HttpPost]
         public ActionResult Demote(int id, string sndid)
         {
             Channel ch = db.Channels.Include("Users")
@@ -478,6 +477,26 @@ namespace Workplace_Collaboration.Controllers
             TempData["message"] = "User Successfully Demoted";
             TempData["messageType"] = "alert-success";
             return Redirect("/Channel/ShowUsers/" + id);
+        }
+        [Authorize(Roles = "User,Moderator,Admin")]
+        public ActionResult Search()
+        {
+            var channels = db.Channels.Include("Users").Include("Moderators");
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+                                                      .First();
+            ViewBag.Channels = channels;
+            ViewBag.User = user;
+            ViewBag.SearchTerm = "";
+            if (Convert.ToString(HttpContext.Request.Query["term"]) != null)
+            {
+                ViewBag.SearchTerm = Convert.ToString(HttpContext.Request.Query["term"]).Trim();
+            }
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Message = TempData["message"];
+                ViewBag.Alert = TempData["messageType"];
+            }
+            return View();
         }
 
     }
