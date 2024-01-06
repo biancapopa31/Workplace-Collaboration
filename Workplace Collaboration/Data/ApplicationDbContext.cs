@@ -32,6 +32,12 @@ namespace Workplace_Collaboration.Data
                 .HasMany(e => e.IsModerator)
                 .WithMany(e => e.Moderators)
                 .UsingEntity(e => e.ToTable("UserIsModInChannel"));
+
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(e => e.RequestedChannel)
+                .WithMany(e => e.Requester)
+                .UsingEntity(e => e.ToTable("UserRequestedToJoinChannel"));
         
             //M-to-M Channel and Category
             modelBuilder.Entity<ChannelHasCategory>()

@@ -17,6 +17,7 @@ namespace Workplace_Collaboration.Models
 
         public virtual ICollection<ApplicationUser>? Users { get; set; }
         public virtual ICollection<ApplicationUser>? Moderators { get; set; }
+        public virtual ICollection<ApplicationUser>? Requester { get; set; }
 
         //Realtia many-to-many
         public virtual ICollection<ChannelHasCategory>? ChannelHasCategories { get; set; }

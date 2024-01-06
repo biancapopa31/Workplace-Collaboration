@@ -267,6 +267,7 @@ namespace Workplace_Collaboration.Controllers
         {
             Channel ch = db.Channels.Include("Users")
                              .Include("Moderators")
+                             .Include("Requester")
                              .Where(ch => ch.Id == id)
                              .First();
             ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
@@ -275,6 +276,7 @@ namespace Workplace_Collaboration.Controllers
             if (ch.Moderators.Contains(user)) ViewBag.isModerator = true;
             else ViewBag.isModerator = false;
             ViewBag.Moderators = ch.Moderators;
+            ViewBag.Requesters = ch.Requester;
             return View(ch); 
         }
 
@@ -481,7 +483,7 @@ namespace Workplace_Collaboration.Controllers
         [Authorize(Roles = "User,Moderator,Admin")]
         public ActionResult Search()
         {
-            var channels = db.Channels.Include("Users").Include("Moderators");
+            var channels = db.Channels.Include("Users").Include("Moderators").Include("Requester");
             ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
                                                       .First();
             ViewBag.Channels = channels;
@@ -497,6 +499,125 @@ namespace Workplace_Collaboration.Controllers
                 ViewBag.Alert = TempData["messageType"];
             }
             return View();
+        }
+        [Authorize(Roles = "User,Moderator,Admin")]
+        [HttpPost]
+        public ActionResult RequestToJoin(int id) 
+        {
+            Channel ch = db.Channels.Include("Users")
+                             .Include("Moderators")
+                             .Include("Requester")
+                             .Where(ch => ch.Id == id)
+                             .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+              .First();
+            if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
+            if(ch.Users.Contains(user))
+            {
+                TempData["message"] = "Already part of this Channel";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("Index");
+            }
+            if (ch.Requester == null) ch.Requester = new Collection<ApplicationUser>();
+            if (!ch.Requester.Contains(user))
+            {
+                ch.Requester.Add(user);
+                db.SaveChanges();
+                TempData["message"] = "Requested To Join The Channel";
+                TempData["messageType"] = "alert-success";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["message"] = "Already Requested To Join this Channel";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("Index");
+            }
+        }
+        [Authorize(Roles = "User,Moderator,Admin")]
+        [HttpPost]
+        public ActionResult AddUserToChannel(int id, string sndid)
+        {
+            Channel ch = db.Channels.Include("Users")
+                                     .Include("Moderators")
+                                     .Include("Requester")
+                                     .Where(ch => ch.Id == id)
+                                     .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+              .First();
+            ApplicationUser target = db.ApplicationUsers.Where(u => u.Id == sndid)
+                                         .First();
+            if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
+            if (ch.Requester == null) ch.Requester = new Collection<ApplicationUser>();
+            if(!ch.Requester.Contains(target)) 
+            {
+                TempData["message"] = "User Hasn't Requested To Join This Channel";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            if (!ch.Moderators.Contains(user) && !User.IsInRole("Admin"))
+            {
+                TempData["message"] = "You do not have the required permissions to admit this user";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            if (!ch.Users.Contains(target))
+            {
+                ch.Users.Add(target);
+                ch.Requester.Remove(target);
+                db.SaveChanges();
+                TempData["message"] = "User Added To Channel";
+                TempData["messageType"] = "alert-success";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            else
+            {
+                TempData["message"] = "Already part of this Channel";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+        }
+        [Authorize(Roles = "User,Moderator,Admin")]
+        [HttpPost]
+        public ActionResult RemoveFromRequests(int id, string sndid)
+        {
+            Channel ch = db.Channels.Include("Users")
+                                     .Include("Moderators")
+                                     .Include("Requester")
+                                     .Where(ch => ch.Id == id)
+                                     .First();
+            ApplicationUser user = db.ApplicationUsers.Where(u => u.Id == _userManager.GetUserId(User))
+              .First();
+            ApplicationUser target = db.ApplicationUsers.Where(u => u.Id == sndid)
+                                         .First();
+            if (ch.Users == null) ch.Users = new Collection<ApplicationUser>();
+            if (ch.Requester == null) ch.Requester = new Collection<ApplicationUser>();
+            if (!ch.Requester.Contains(target))
+            {
+                TempData["message"] = "User Hasn't Requested To Join This Channel";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            if (!ch.Moderators.Contains(user) && !User.IsInRole("Admin"))
+            {
+                TempData["message"] = "You do not have the required permissions to deny this user";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            if (!ch.Users.Contains(target))
+            {
+                ch.Requester.Remove(target);
+                db.SaveChanges();
+                TempData["message"] = "Channel Joined";
+                TempData["messageType"] = "alert-success";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
+            else
+            {
+                TempData["message"] = "Already part of this Channel";
+                TempData["messageType"] = "alert-danger";
+                return Redirect("/Channel/ShowUsers/" + id);
+            }
         }
 
     }
