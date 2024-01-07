@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Workplace_Collaboration.Data;
 
@@ -11,9 +12,10 @@ using Workplace_Collaboration.Data;
 namespace Workplace_Collaboration.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231218202855_ProjectDB2")]
+    partial class ProjectDB2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,21 +52,6 @@ namespace Workplace_Collaboration.Migrations
                     b.HasIndex("ModeratorsId");
 
                     b.ToTable("UserIsModInChannel", (string)null);
-                });
-
-            modelBuilder.Entity("ApplicationUserChannel2", b =>
-                {
-                    b.Property<int>("RequestedChannelId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RequesterId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("RequestedChannelId", "RequesterId");
-
-                    b.HasIndex("RequesterId");
-
-                    b.ToTable("UserRequestedToJoinChannel", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -407,21 +394,6 @@ namespace Workplace_Collaboration.Migrations
                     b.HasOne("Workplace_Collaboration.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("ModeratorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ApplicationUserChannel2", b =>
-                {
-                    b.HasOne("Workplace_Collaboration.Models.Channel", null)
-                        .WithMany()
-                        .HasForeignKey("RequestedChannelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Workplace_Collaboration.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("RequesterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

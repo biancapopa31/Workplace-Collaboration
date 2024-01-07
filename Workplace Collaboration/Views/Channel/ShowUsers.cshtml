@@ -5,10 +5,11 @@
         @ViewBag.Message
     </div>
 }
+<h1>Users</h1>
 <div class="container">
 @foreach(var user in ViewBag.ChannelUsers)
 {
-        <div class="d-flex flex-row bg-info p-3 text-white justify-content-between">
+        <div class="d-flex flex-row bg-info p-3 text-white justify-content-between rounded border-light shadow">
             <div class="text-white">
                 @user.UserName 
             </div>
@@ -44,3 +45,29 @@
     <br />
 }
 </div>
+<br />
+<br />
+<br />
+<br />
+@if (User.IsInRole("Admin") || ViewBag.isModerator)
+{
+    <h1>Requests</h1>
+    <div class="container">
+        @foreach (var user in ViewBag.Requesters)
+        {
+            <div class="d-flex flex-row bg-info p-3 text-white justify-content-between rounded border-light shadow">
+                <div class="text-white">
+                    @user.UserName
+                </div>
+                <form method="post" action="/Channel/AddUserToChannel/@Model.Id/@user.Id">
+                    <button class="btn btn-success" type="submit"><i class="bi bi-check"></i></button>
+            </form>
+                <form method="post" action="/Channel/RemoveFromRequests/@Model.Id/@user.Id">
+                    <button class="btn btn-danger" type="submit"><i class="bi bi-x"></i></button>
+            </form>
+            </div>
+            <br />
+            <br />
+        }
+    </div>
+}

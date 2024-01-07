@@ -1,0 +1,44 @@
+﻿@if (TempData["message"] != null)
+{
+    <div class="alert @ViewBag.Alert p-3 rounded-3 text-center mb-5">
+        @ViewBag.Message
+    </div>
+}
+<form method="GET" action="/Channel/Search">
+    <input type="text" class="form-control"
+           placeholder="Search For a Channel Name" name="term">
+
+    <button class="btn btn-success" type="submit"><i class="bi bi-search"></i></button>
+</form>
+@foreach (Workplace_Collaboration.Models.Channel channel in ViewBag.Channels)
+    if(channel.Name.ToLower().Contains(ViewBag.SearchTerm.ToLower()))
+    {
+        <div class="card">
+            <div class="card-body">
+
+                <h3 class="card-title alert-success py-3 px-3 rounded-2">@channel.Name</h3>
+
+                <div class="card-text">@channel.Description</div>
+
+                <div class="d-flex justify-content-between flex-row mt-5">
+                    @if (channel.Users.Contains(ViewBag.User) || User.IsInRole("Admin"))
+                    {
+                        <a class="btn btn-success" href="/Channel/Show/@channel.Id">View Channel</a>
+                    }
+                    else if (channel.Requester.Contains(ViewBag.User))
+                    {
+                        <form method="post" action="/Channel/RequestToJoin/@channel.Id">
+                            <button class="btn btn-success" type="submit" disabled>Request Sent</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" action="/Channel/RequestToJoin/@channel.Id">
+                            <button class="btn btn-success" type="submit">Request To Join</button>
+                        </form>
+                    }
+                </div>
+
+            </div>
+        </div>
+    }

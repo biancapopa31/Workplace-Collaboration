@@ -10,6 +10,7 @@ namespace Workplace_Collaboration.Models
         
         public virtual ICollection<Channel>? Channels { get; set; }
         public virtual ICollection<Channel>? IsModerator { get; set; }
+        public virtual ICollection<Channel>? RequestedChannel { get; set; }
 
 
         public string? FirstName { get; set; }
