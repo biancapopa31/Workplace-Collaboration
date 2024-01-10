@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Ganss.Xss;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -76,11 +77,13 @@ namespace Workplace_Collaboration.Controllers
                                         .First();
             Message message = db.Messages.Find(messageId);
 
+            var sanitizer = new HtmlSanitizer();
+
             if (ModelState.IsValid)
             {
                 if (message.User == user)
                 {
-                    message.Content = rqMessage.Content;
+                    message.Content = sanitizer.Sanitize(rqMessage.Content);
                     db.SaveChanges();
 
                 }

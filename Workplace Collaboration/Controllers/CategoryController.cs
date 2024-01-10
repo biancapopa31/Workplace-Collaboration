@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Ganss.Xss;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -124,10 +125,12 @@ namespace Workplace_Collaboration.Controllers
         [Authorize(Roles = "User,Moderator,Admin")]
         public IActionResult Show([FromForm] Message message)
         {
+            var sanitizer = new HtmlSanitizer();
             if (ModelState.IsValid)
             {
                 message.SentDate = DateTime.Now;
                 message.UserId = _userManager.GetUserId(User);
+                message.Content = sanitizer.Sanitize(message.Content);
                 db.Messages.Add(message);
                 db.SaveChanges();
                 return Redirect(Url.Action("Show", "Category", new { channelId = message.ChannelId, categoryId = message.CategoryId }));
@@ -237,7 +240,6 @@ namespace Workplace_Collaboration.Controllers
             }
 
             if (ch.Moderators.Contains(user) || User.IsInRole("Admin"))
-            //if (User.IsInRole("Admin"))
             {
                 return View(ch);
             }
