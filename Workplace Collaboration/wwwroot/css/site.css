@@ -17,6 +17,11 @@ html {
     scrollbar-width: thin;
 }
 
+.form-label, .form-floating {
+    margin-bottom: 4px;
+    color: black;
+}
+
 ::-webkit-scrollbar {
     width: 12px;
 }
