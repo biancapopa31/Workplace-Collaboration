@@ -127,6 +127,15 @@ a.nav-link:hover {
 
 }
 
+.user-container {
+    padding: 1%;
+    background-color: var(--back-card-color);
+    border-radius: 4px;
+    border-color: var(--accent);
+    border-width: 1px;
+
+}
+
 .message-container {
     display: flex;
     flex-direction: column;
