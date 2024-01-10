@@ -1,14 +1,49 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<div class="d-flex flex-column overflow-hidden w-100 position-relative">
+    <img src="~/images/homeIndex4.jpg" alt="Your Image" class="w-100 ms-5" />
 
-<div class="text-center">
-    <h1 class="display-4">Welcome To {$WorkingTitle}</h1>
+    <div class="gradient-div">
+
+     <div class="gradient-overlay" style="background-image: linear-gradient(to right, #2F3E46 15%, rgba(0, 0, 0, 0) 100%);"></div>
+
+        <div class="flex-grow-1 d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-0 end-0 bottom-0 text-center text-white">
+        <h1 class="display-4">Welcome To Workplace Collaboration</h1>
+        <h1>Working Together: Made Easy!</h1>
+        <h2>Create or Join a Channel and Get Right Into the Working Groove</h2>
+        <div class="d-flex flex-row">
+            <a class="btn btn-outline-primary m-3" href="/Identity/Account/Login">Login</a>
+            <a class="btn btn-primary m-3" href="/Identity/Account/Register">Make an account</a>
+        </div>
+    </div>
 </div>
-<br />
-<br />
-<br />
-<div class="text-center">
-    <h1>Working Together: Made Easy!</h1>
-    <h2>Create or Join a Channel and Get Right Into the Working Groove</h2>
-</div>
+
+
+<style>
+    .container{
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        max-height: 90vh;
+        max-width: 100vw;
+        overflow:hidden;
+        flex-grow: 1;
+    }
+
+    body, main{
+        padding: 0 !important;
+        margin:0;
+        flex-grow: 1;
+    }
+
+    .gradient-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
