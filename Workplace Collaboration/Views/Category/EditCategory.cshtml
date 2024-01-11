@@ -12,23 +12,27 @@
 
 <div class="container mt-3">
     <div class="row">
-        <div class="col-6 offset-3">
+        <div class="col-md-6 offset-3">
 
             @using (Html.BeginForm(actionName: "EditCategory", controllerName: "Category",
             method: FormMethod.Post,
             routeValues: new { channelId = ViewBag.ChannelId, categoryId = Model.Id}))
             {
-                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                <div class="card edit-container p-0 d-flex flex-column justify-content-between">
+                    <div class="card-body">
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-                @Html.Label("Name", "Category Name")
-                <br />
-                @Html.EditorFor(m => m.Name, new {htmlAttributes = new {@class = "form-control"}})
-                @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger"})
+                    @Html.Label("Name", "Category Name", new {@class = "ms-4 mb-2"})
+                    <br />
+                    @Html.EditorFor(m => m.Name, new {htmlAttributes = new {@class = "form-control mx-auto", @style ="width: 95%"}})
+                    @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger m-2"})
 
-                <br />
-
-                <button class="btn btn-success" type="submit">Modify Category</button>
-
+                    </div>
+                    <div class="border-top border-1 d-flex flex-row p-3 justify-content-between">
+                        <button class="btn btn-success" type="submit">Modify Category</button>
+                        <a class="btn btn-outline-primary" style="width: fit-content" href=@Url.Action("Show", "Channel", new { id = ViewBag.ChannelId})>Back to channel</a>
+                    </div>
+                </div>
             }
 
         </div>

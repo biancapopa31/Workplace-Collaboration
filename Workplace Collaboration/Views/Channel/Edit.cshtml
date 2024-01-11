@@ -11,26 +11,29 @@
             method: FormMethod.Post,
             routeValues: new { id = Model.Id }))
             {
-                @Html.Label("Name", "Channel Name")
-                <br />
-                @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control" } })
+                <div class="card edit-container p-0 d-flex flex-column justify-content-between">
+                    <div class="card-body">
+                        @Html.Label("Name", "Channel Name", new {@class = "ms-3 mb-2"})
+                        <br />
+                        @Html.EditorFor(m => m.Name, new { htmlAttributes = new { @class = "form-control mx-auto", @style ="width: 95% background-color: " } })
 
-                @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger" })
-                <br />
+                        @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger" })
+                        <br />
 
-                <br />
+                        <br />
 
-                @Html.Label("Description", "Channel Description")
-                <br />
-                @Html.Editor("Description", new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.Label("Description", "Channel Description", new {@class = "ms-3 mb-2"})
+                        <br />
+                        @Html.Editor("Description", new { htmlAttributes = new { @class = "form-control mx-auto", @style ="width: 95% background-color: "} })
 
-                @Html.ValidationMessageFor(m => m.Description, null, new { @class = "text-danger" })
-                <br />
-
-                <br />
-
-                <button class="btn btn-sm btn-success" type="submit">Modify Channel</button>
-
+                        @Html.ValidationMessageFor(m => m.Description, null, new { @class = "text-danger" })
+                    
+                    </div>
+                    <div class="border-top border-1 d-flex flex-row p-3 justify-content-between">
+                        <button class="btn btn-sm btn-success" type="submit">Modify Channel</button>
+                        <a class="btn btn-outline-primary" style="width: fit-content" href=@Url.Action("Show", "Channel", new { id = @Model.Id})>Back to channel</a>
+                    </div>
+                </div>
             }
         </div>
     </div>
