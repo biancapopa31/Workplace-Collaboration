@@ -130,7 +130,8 @@ namespace Workplace_Collaboration.Controllers
             {
                 message.SentDate = DateTime.Now;
                 message.UserId = _userManager.GetUserId(User);
-                message.Content = sanitizer.Sanitize(message.Content);
+                
+                //message.Content = sanitizer.Sanitize(message.Content); // nu merge pentru video
                 db.Messages.Add(message);
                 db.SaveChanges();
                 return Redirect(Url.Action("Show", "Category", new { channelId = message.ChannelId, categoryId = message.CategoryId }));
