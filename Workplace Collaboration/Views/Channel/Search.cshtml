@@ -4,16 +4,16 @@
         @ViewBag.Message
     </div>
 }
-<form method="GET" action="/Channel/Search">
+<form method="GET" action="/Channel/Search" class="my-3">
     <input type="text" class="form-control"
            placeholder="Search For a Channel Name" name="term">
 
-    <button class="btn btn-success" type="submit"><i class="bi bi-search"></i></button>
+    <button class="btn btn-success" type="submit">Search Channel</button>
 </form>
 @foreach (Workplace_Collaboration.Models.Channel channel in ViewBag.Channels)
     if(channel.Name.ToLower().Contains(ViewBag.SearchTerm.ToLower()))
     {
-        <div class="card">
+        <div class="card my-3">
             <div class="card-body">
 
                 <h3 class="card-title alert-success py-3 px-3 rounded-2">@channel.Name</h3>
