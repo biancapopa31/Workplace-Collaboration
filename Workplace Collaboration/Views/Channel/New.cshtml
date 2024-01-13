@@ -8,27 +8,32 @@
             @using (Html.BeginForm(actionName: "New", controllerName: "Channel",
             method: FormMethod.Post))
             {
+                <div class="card edit-container p-0 d-flex flex-column justify-content-between">
+                    <div class="card-body">
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                        @Html.Label("Name", "Channel Name")
+                        <br />
+                        @Html.TextBox("Name", null, new { @class = "form-control" })
 
-                @Html.Label("Name", "Channel Name")
-                <br />
-                @Html.TextBox("Name", null, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                        <br />
 
-                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
-                <br />
+                        <br />
 
-                <br />
+                        @Html.Label("Description", "Channel Description")
+                        <br />
+                        @Html.TextArea("Description", null, new { @class = "form-control" })
 
-                @Html.Label("Description", "Channel Description")
-                <br />
-                @Html.TextArea("Description", null, new { @class = "form-control" })
-
-                @Html.ValidationMessage("Description", null, new { @class = "text-danger" })
-                <br />
-                <br />
-
-                <button class="btn btn-success" type="submit">Create Channel</button>
+                        @Html.ValidationMessage("Description", null, new { @class = "text-danger" })
+                        <br />
+                        <br />
+                    </div>
+                    <div class="border-top border-1 d-flex flex-row p-3 justify-content-between">
+                        <button class="btn btn-success" type="submit">Create Channel</button>
+                        <a class="btn btn-outline-primary" style="width: fit-content" href=@Url.Action("Index", "Channel")><i class="bi bi-arrow-left"> </i>Back</a>
+                    </div>
+                </div>
 
             }
 
